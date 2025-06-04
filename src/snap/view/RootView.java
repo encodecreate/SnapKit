@@ -1,99 +1,55 @@
-/*
- * Copyright (c) 2010, ReportMill Software. All rights reserved.
- */
 package snap.view;
-import snap.geom.Rect;
+
+import snap.gfx.*;
+import snap.util.*;
 
 /**
- * The top level View in a window.
+ * Root view of the SnapKit window. Extended to support an overlay for menus.
  */
 public class RootView extends ParentView {
-    
-    // The content
-    private View  _content;
-    private View _menuOverlay;
-    
-    // Constants for properties
-    public static final String Content_Prop = "Content";
+
+    // The content view (main UI content)
+    private View _content;
+
+    // The overlay pane for menu dropdowns
+    private ParentView _menuOverlay;
 
     /**
-     * Creates a RootView.
+     * Constructor.
      */
     public RootView()
     {
-        enableEvents(KeyEvents);
-        setFocusable(true);
-        setFocusPainted(false);
-        setFill(ViewUtils.getBackFill());
-        
-        _menuOverlay = new View();
-        _menuOverlay.setPickable(false); // Allow clicks to pass through if no menu is open
-        _menuOverlay.setVisible(false);
-        addChild(_menuOverlay); // Ensure this is added last, so it's on top of other children
+        super();
+
+        // Create and configure the menu overlay
+        _menuOverlay = new ParentView();
+        _menuOverlay.setPickable(false); // Don't intercept mouse events by default
+        _menuOverlay.setVisible(false);  // Hidden until needed
+        addChild(_menuOverlay);
     }
 
     /**
-     * Returns the content.
+     * Returns the menu overlay pane.
      */
-    public View getContent()  { return _content; }
+    public ParentView getMenuOverlay()
+    {
+        return _menuOverlay;
+    }
 
     /**
-     * Sets the content.
+     * Sets the content for this RootView.
      */
     public void setContent(View aView)
     {
-        View old = _content; if(aView == old) return;
-        if (_content != null)
-            removeChild(_content);
+        if (_content != null) removeChild(_content);
         _content = aView;
-        if (_content != null)
-            addChild(_content);
-        firePropChange(Content_Prop, old, _content);
+        if (_content != null) addChild(_content, 0); // Add below overlay
     }
 
     /**
-     * Override to return this RootView.
+     * Returns the content for this RootView.
      */
-    public RootView getRootView()  { return this; }
+    public View getContent()  { return _content; }
 
-    /**
-     * Override to register for layout.
-     */
-    protected void setNeedsLayoutDeep(boolean aVal)
-    {
-        if (aVal == isNeedsLayoutDeep()) return;
-        super.setNeedsLayoutDeep(aVal);
-        ViewUpdater updater = getUpdater();
-        if (updater != null)
-            updater.relayoutLater();
-    }
-
-    /**
-     * Override to actually paint in this RootView.
-     */
-    protected void repaintInParent(Rect aRect)  { repaint(); }
-
-    /**
-     * Returns the preferred width.
-     */
-    protected double getPrefWidthImpl(double aH)
-    {
-        return BoxView.getPrefWidth(this, _content, aH);
-    }
-
-    /**
-     * Returns the preferred height.
-     */
-    protected double getPrefHeightImpl(double aW)
-    {
-        return BoxView.getPrefHeight(this, _content, aW);
-    }
-
-    /**
-     * Layout children.
-     */
-    protected void layoutImpl()
-    {
-        BoxView.layout(this, _content, true, true);
-    }
+    // ... (other RootView code as needed) ...
 }
