@@ -79,13 +79,12 @@ public class Menu extends MenuItem {
     {
         ButtonBase btn = new ButtonBase();
         btn.setText(item.getText());
-        // If you have icons or more, set them here.
-        // Set up event handling for menu item selection:
-        btn.setOnAction(e -> {
-            // Call item action, then hide the menu
-            item.fireActionEvent();
+        // Attach event handler using addEventHandler, not setOnAction
+        btn.addEventHandler(e -> {
+            // Call item action, passing the event as expected
+            item.fireActionEvent(e);
             hide();
-        });
+        }, View.Action);
         return btn;
     }
 

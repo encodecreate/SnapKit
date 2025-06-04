@@ -8,9 +8,6 @@ import snap.util.*;
  */
 public class RootView extends ParentView {
 
-    // The content view (main UI content)
-    private View _content;
-
     // The overlay pane for menu dropdowns
     private ParentView _menuOverlay;
 
@@ -23,8 +20,8 @@ public class RootView extends ParentView {
 
         // Create and configure the menu overlay
         _menuOverlay = new ParentView();
-        _menuOverlay.setPickable(false); // Don't intercept mouse events by default
-        _menuOverlay.setVisible(false);  // Hidden until needed
+        _menuOverlay.setPickable(false);
+        _menuOverlay.setVisible(false);
         addChild(_menuOverlay);
     }
 
@@ -41,15 +38,28 @@ public class RootView extends ParentView {
      */
     public void setContent(View aView)
     {
-        if (_content != null) removeChild(_content);
-        _content = aView;
-        if (_content != null) addChild(_content, 0); // Add below overlay
+        // Remove all children except overlay
+        for (int i = getChildCount() - 1; i >= 0; i--) {
+            View child = getChild(i);
+            if (child != _menuOverlay)
+                removeChild(child);
+        }
+        // Add new content as the first child (below overlay)
+        if (aView != null)
+            addChild(aView, 0);
     }
 
     /**
      * Returns the content for this RootView.
+     * Backwards compatible: returns the first child that is not the overlay.
      */
-    public View getContent()  { return _content; }
-
-    // ... (other RootView code as needed) ...
+    public View getContent()
+    {
+        for (int i = 0, n = getChildCount(); i < n; i++) {
+            View child = getChild(i);
+            if (child != _menuOverlay)
+                return child;
+        }
+        return null;
+    }
 }

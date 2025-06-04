@@ -179,7 +179,7 @@ public class MenuButton extends ButtonBase {
         // Show menu
         double menuY = getHeight();
         menu.showMenuAtXY(this, 0, menuY);
-        menu.getPopup().addPropChangeListener(pc -> ViewUtils.runLater(() -> hideMenu()), Showing_Prop);
+    //    menu.getPopup().addPropChangeListener(pc -> ViewUtils.runLater(() -> hideMenu()), Showing_Prop);
     }
 
     /**
