@@ -11,6 +11,7 @@ public class RootView extends ParentView {
     
     // The content
     private View  _content;
+    private View _menuOverlay;
     
     // Constants for properties
     public static final String Content_Prop = "Content";
@@ -24,6 +25,11 @@ public class RootView extends ParentView {
         setFocusable(true);
         setFocusPainted(false);
         setFill(ViewUtils.getBackFill());
+        
+        _menuOverlay = new View();
+        _menuOverlay.setPickable(false); // Allow clicks to pass through if no menu is open
+        _menuOverlay.setVisible(false);
+        addChild(_menuOverlay); // Ensure this is added last, so it's on top of other children
     }
 
     /**

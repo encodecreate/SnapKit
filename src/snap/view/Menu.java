@@ -136,6 +136,38 @@ public class Menu extends MenuItem {
         _popupWindow.setContent(itemColView);
         return _popupWindow;
     }
+    
+    public void showMenuDropdown(View anchor, double x, double y) {
+        // Get the overlay pane (you might need a static getter or pass reference)
+        RootView rootView = anchor.getRootView();
+        View overlay = rootView.getMenuOverlay();
+
+        // Clear any previous dropdowns
+        overlay.removeChildren();
+
+        // Create dropdown content
+        ColView menuDropdown = new ColView();
+        // ...populate with menu items...
+        menuDropdown.setMinWidth(125);
+        menuDropdown.setFillWidth(true);
+        menuDropdown.setPadding(4, 1, 4, 1);
+
+        // Set position
+        menuDropdown.setXY(x, y);
+
+        // Add to overlay and show overlay
+        overlay.addChild(menuDropdown);
+        overlay.setPickable(true);   // Now overlay captures mouse events
+        overlay.setVisible(true);
+
+        // Add event handler to hide dropdown if clicked outside
+        overlay.addEventHandler(evt -> {
+            // Hide overlay and remove dropdown when clicked (outside menu)
+            overlay.removeChildren();
+            overlay.setVisible(false);
+            overlay.setPickable(false);
+        }, ViewEvent.Type.MousePress);
+    }
 
     /**
      * Show menu.
@@ -154,8 +186,7 @@ public class Menu extends MenuItem {
     public void showMenuAtXY(View aView, double menuX, double menuY)
     {
         if (isPopupShowing()) return;
-        PopupWindow popupWindow = getPopup();
-        popupWindow.show(aView, menuX, menuY);
+        showMenuDropdown(this, 0, getHeight());
     }
 
     /**
